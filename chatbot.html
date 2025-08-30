@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🤖 SmartTutor</title>
+  <style>
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.6); 
+      border-radius: 15px;
+      padding: 25px;
+      width: 450px;
+      height: 600px;
+      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    h2 {
+      text-align: center;
+      color: #f39c12;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #chat-box {
+      height: 420px;
+      overflow-y: auto;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.2); 
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+      animation: slideIn 1s ease-in-out;
+    }
+
+    .message {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 20px;
+      max-width: 70%;
+    }
+
+    .user {
+      background-color: #1abc9c; /* لون أخضر */
+      align-self: flex-end;
+      animation: slideInRight 0.5s ease-out;
+      font-weight: bold;
+    }
+
+    .bot {
+      background-color: #34495e; /* لون أزرق داكن */
+      align-self: flex-start;
+      animation: slideInLeft 0.5s ease-out;
+      font-weight: bold;
+    }
+
+    #input-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #user-input {
+      width: 80%;
+      padding: 12px 15px;
+      border-radius: 25px;
+      border: none;
+      background-color: #ecf0f1;
+      color: #2c3e50;
+      margin-right: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 12px 20px;
+      background-color: #f39c12;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #e67e22;
+    }
+
+    /* تأثيرات الأنيميشن */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        transform: translateX(-100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const userName = localStorage.getItem("userName");
+      const userEmail = localStorage.getItem("userEmail");
+  
+      // لو مفيش اسم أو إيميل ➔ نحوله لصفحة تسجيل الدخول
+      if (!userName || !userEmail) {
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+  
+  <div class="overlay">
+    <h2>🤖 SmartTutor</h2>
+
+    <div id="chat-box"></div>
+
+    <div id="input-container">
+      <input type="text" id="user-input" placeholder="📝 Type your message here..." onkeypress="handleKeyPress(event)">
+      <button onclick="sendMessage()">Send 🚀</button>
+    </div>
+  </div>
+
+  <script>
+  const responses = [
+  { keywords: ['courses', 'what are the courses', 'about courses'], response: "Our courses cover various topics. Would you like to know more about a specific course?" },
+  { keywords: ['assignments', 'homework help','Assignment'], response: "You can submit assignments on the platform. If you need help, I'm here to assist!" },
+  { keywords: ['exams', 'exam preparation'], response: "Need help preparing for exams? I can help you with that!" },
+  { keywords: ['grades', 'results', 'evaluations'], response: "You can check your grades on your personal page!" },
+  { keywords: ['hello', 'hi', 'hey'], response: "Hi there! How can I assist you on Be Online?" },
+  { keywords: ['who are you', 'what do you do'], response: "I'm here to assist you on the Be Online platform!" },
+  { keywords: ['educational courses'], response: "We offer many courses in various fields. Would you like to know more about one?" }
+];
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") sendMessage();
+    }
+
+    async function sendMessage() {
+      const userInput = document.getElementById('user-input').value.trim();
+      if (!userInput) return;
+
+      const chatBox = document.getElementById("chat-box");
+
+      // إضافة رسالة المستخدم
+      chatBox.innerHTML += `<div class="message user">👤 <strong>Me:</strong> ${userInput}</div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // رسالة جاري التفكير...
+      chatBox.innerHTML += `<div class="message bot" id="loading">🤖 ⏳ Loading..</div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // البحث عن الرد المناسب بناءً على الكلمات المفتاحية
+      const response = getResponse(userInput);
+      
+      if (response) {
+        document.getElementById("loading").remove();
+        chatBox.innerHTML += `<div class="message bot">🧠 <strong>Be Online:</strong> ${response}</div>`;
+      } else {
+        try {
+          let gemeniResponse = await fetch("http://localhost:5002/api/gemini-chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userInput })
+          });
+
+          let data = await gemeniResponse.json();
+          document.getElementById("loading").remove();
+          chatBox.innerHTML += `<div class="message bot">🧠 <strong>البوت:</strong> ${data.reply || "لم يتم تلقي رد من الذكاء الاصطناعي"}</div>`;
+        } catch (error) {
+          console.error("Error:", error);
+          document.getElementById("loading").remove();
+          chatBox.innerHTML += `<div class="message bot">❌ <strong>البوت:</strong> حدث خطأ أثناء الاتصال بالخادم</div>`;
+        }
+      }
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+      document.getElementById("user-input").value = "";
+    }
+
+    function getResponse(userInput) {
+      const lowerCaseInput = userInput.toLowerCase();
+      
+      for (let i = 0; i < responses.length; i++) {
+        const responseObj = responses[i];
+        for (let j = 0; j < responseObj.keywords.length; j++) {
+          if (lowerCaseInput.includes(responseObj.keywords[j].toLowerCase())) {
+            return responseObj.response;
+          }
+        }
+      }
+      return null;
+    }
+  </script>
+</body>
+</html>

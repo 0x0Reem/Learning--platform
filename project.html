@@ -1,0 +1,341 @@
+<!DOCTYPE html> 
+<html lang="en">
+      
+<head>
+      
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+      
+    <style>
+        /* Video as Background */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Behind all other elements */
+        }
+
+        nav {
+            background-color: rgba(44, 62, 80, 0.9);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: none;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        nav ul li a:hover {
+            color: #f39c12;
+        }
+
+        .account-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .account-links a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid white;
+        }
+
+        .account-links a:hover {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(48, 70, 91, 0.9);
+            border-radius: 5px;
+            padding: 10px;
+            min-width: 150px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f39c12;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .hero {
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card i {
+            font-size: 40px;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .footer {
+            background: rgba(49, 68, 86, 0.9);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .about-us {
+            color: rgb(13, 13, 49);
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                width: 100%;
+            }
+
+            .account-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        #profile-dropdown a:hover {
+        background-color: #f39c12;
+              }
+
+    </style>
+ 
+      
+</head>
+<body>
+
+      
+<!-- Image Background -->
+<img id="bg-image" src="https://images.unsplash.com/photo-1584697964328-b1e7f63dca95?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Background Image">
+
+<style>
+#bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+</style>
+ 
+    <nav>
+        <div class="logo">
+            <img src="https://paltry-paradoxure.transforms.svdcdn.com/production/general/Aidian-Academy/academy-aidian.png?w=467&h=354&q=90&auto=format&fit=crop&dm=1624442340&s=e9a1cb7c07c2ac6b85090dc1e48bcd6d" alt="Logo" height="50">
+        </div>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li class="dropdown"><div class="dropdown-menu"><li><a href="review-courses.html"> Review Courses</a></li></div></li>
+            <li class="dropdown"><div class="dropdown-menu"><li><a href="student_grades.html">Student Score </a></li></div></li>
+            <li class="dropdown"><div class="dropdown-menu"><li><a href="assignments.html">Assignments&Exames </a></li></div></li>
+            <li class="dropdown"><div class="dropdown-menu"><li><a href="chatbot.html">Chat & SmartTutor </a></li></div></li>
+        </ul>
+        <div class="account-links" id="auth-section">
+            <a href="login.html"><button> Signup</button></a>
+            <a href="login.html"><button> Login</button></a>
+        </div>
+      
+    </nav>
+   
+
+      
+    <div class="hero">
+        Welcome to Be Online – Learn, Grow, Succeed!
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <i class="fas fa-book"></i>
+            <h3>Course Management</h3>
+            <p>Manage your learning materials and track progress.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-video"></i>
+            <h3>Smart Tutar</h3>
+            <p>Guide You TO Achieve more Smart.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-pencil-alt"></i>
+            <h3>Assignments & Quizzes</h3>
+            <p>Test your knowledge and improve with assignments.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="about-us">
+            About Us: Be Online is a full-featured learning management system that helps you manage your educational work in a matter of hours.
+        </div>
+        &copy; 2025 Be Online. All Rights Reserved.
+    </div>
+ 
+    <script>
+        ScrollReveal().reveal(".hero", { duration: 100, origin: "top", distance: "50px" });
+        ScrollReveal().reveal(".card", { duration: 100, origin: "bottom", distance: "50px", interval: 200 });
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    const authSection = document.getElementById("auth-section");
+
+    if (authSection) {
+  if (userName && userEmail) {
+    authSection.innerHTML = `
+      <div style="position: relative; display: inline-block;">
+        <span style="color: skyblue;">
+          <img 
+            src="https://images.unsplash.com/placeholder-avatars/extra-large.jpg?w=32&dpr=2&crop=faces&bg=%23fff&h=32&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" 
+            alt="Profile Picture" 
+            style="border-radius: 50%; width: 32px; height: 32px; margin-right: 10px; cursor: pointer;" 
+            onclick="toggleDropdown()"
+          />
+          <strong style="color: white;">${userName}</strong>
+          <span style="color: white; font-size: 12px;">(${userEmail})</span>
+        </span>
+        <span>
+          <button onclick="logout()" style="margin-left: 5px;">Logout</button>
+        </span>
+        <div 
+          id="profile-dropdown" 
+          style="display: none; position: absolute; top: 40px; right: 0; background-color: rgba(48, 70, 91, 0.95); padding: 10px; border-radius: 8px; z-index: 1000; width: 170px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"
+        >
+          <a href="view_profile.html" style="color: white; text-decoration: none; padding: 8px 0; display: block;">👤 View Profile</a>
+          <a href="account_ settings.html" style="color: white; text-decoration: none; padding: 8px 0; display: block;">⚙️ Account Settings</a>
+          <a href="technical_support.html" style="color: white; text-decoration: none; padding: 8px 0; display: block;">🛠 Technical Support</a>
+        </div>
+      </div>
+    `;
+ 
+        }
+    }
+});
+
+function toggleDropdown() {
+    const dropdown = document.getElementById("profile-dropdown");
+    dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+}
+
+function logout() {
+    localStorage.clear();
+    window.location.reload();  // Redirect to login page or any other page
+}
+
+
+function toggleDropdown() {
+  const dropdown = document.getElementById("profile-dropdown");
+  if (dropdown) {
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+}
+
+// إغلاق القائمة إذا ضغط المستخدم خارجها
+document.addEventListener("click", function(event) {
+  const dropdown = document.getElementById("profile-dropdown");
+  const profileImg = event.target.closest("img");
+  if (!profileImg && dropdown && !event.target.closest("#profile-dropdown")) {
+    dropdown.style.display = "none";
+  }
+});
+
+
+</script>
+
+  
+</body>
+</html>

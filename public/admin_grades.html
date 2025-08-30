@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Upload Grades</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      background-size: cover;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: auto;
+      backdrop-filter: blur(5px);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+      background: #fff;
+      color: #333;
+      border-radius: 8px;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #ddd;
+    }
+  
+    #delete-all {
+             /* يثبته في الشاشة */
+    bottom: 100px;            /* المسافة من تحت */
+    left: 20px;               /* مسافة من الشمال (مش 0%) */
+    padding: 8px 20px;
+    font-size: 14px;
+    background-color: #188fba;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#delete-all:hover {
+    background-color: #0e6786;
+    transform: scale(1.05); /* يكبر شوية عند الـ hover */
+}
+
+  #delete-all:hover {
+    background-color: #e84118;
+    transform: translateX(-50%) scale(1.05); /* يكبر شوية مع المحافظة على المركز */
+  }
+
+
+
+  #delete-all:hover {
+    background-color: #e84118;
+    transform: scale(1.05);  /* لما تحومي فوقه يكبر شوية */
+  }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Upload Student Grades</h2>
+    <form id="grade-form" onsubmit="handleSubmit(event)">
+      <input type="text" id="student-name" placeholder="Student Name" required />
+      <input type="email" id="student-email" placeholder="Student Email" required />
+      <input type="text" id="subject" placeholder="Subject" required />
+      <input type="text" id="grade" placeholder="Grade" required />
+      <input type="text" id="level" placeholder="Level" required />
+      <button type="submit">Upload Grade</button>
+    </form>
+  </div>
+  <!-- Button to delete all grades -->
+  <button id="delete-all" onclick="deleteAllGrades()">Delete All Grades</button>
+  <!-- Table to display uploaded grades -->
+  <div class="grades-table-container">
+    <h3>Uploaded Grades</h3>
+    <table id="grades-table">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Subject</th>
+          <th>Grade</th>
+          <th>Level</th>
+        </tr>
+      </thead>
+      <tbody id="grades-table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- ScrollReveal CDN -->
+  <script src="https://unpkg.com/scrollreveal"></script>
+
+  <script>
+    // ScrollReveal Animation
+    ScrollReveal().reveal('.form-container', {
+      duration: 1200,
+      origin: 'bottom',
+      distance: '60px',
+      easing: 'ease-in-out',
+      reset: false
+    });
+
+    // Function to handle form submission
+    async function handleSubmit(event) {
+      event.preventDefault();
+
+      const studentName = document.getElementById("student-name").value;
+      const studentEmail = document.getElementById("student-email").value;
+      const subject = document.getElementById("subject").value;
+      const grade = document.getElementById("grade").value;
+      const level = document.getElementById("level").value;
+
+      // Check if student email is provided
+      if (!studentEmail) {
+        alert("❗ يجب إدخال البريد الإلكتروني");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5002/api/admin/evaluations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            student_name: studentName,
+            student_email: studentEmail,
+            subject,
+            grade,
+            level
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("✅ Grade uploaded successfully!");
+          document.getElementById("grade-form").reset();
+          // Don't reset the student email field
+          document.getElementById("student-email").value = studentEmail;
+          displayGrades(); // Update the table after successful upload
+        } else {
+          alert(data.message || "Failed to upload grade.");
+        }
+      } catch (error) {
+        console.error("Error uploading grade:", error);
+        alert("An error occurred.");
+      }
+    }
+
+    // Function to display uploaded grades in the table
+  async function displayGrades() {
+  const gradesTableBody = document.getElementById("grades-table-body");
+
+  try {
+    const response = await fetch("http://localhost:5002/api/admin/evaluations/all");
+    const grades = await response.json();
+
+    // Log the grades to see the response in the console
+    console.log("Grades from API:", grades);
+
+    // If the response is not an array, log an error
+    if (!Array.isArray(grades)) {
+      console.error("Error: Expected an array but received:", grades);
+      gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ خطأ في البيانات المسترجعة.</td></tr>";
+      return;
+    }
+
+    // If no grades are found
+    if (grades.length === 0) {
+      gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ No grades found.</td></tr>";
+    } else {
+      // Populate the table with grades
+      gradesTableBody.innerHTML = grades.map(grade => `
+        <tr>
+          <td>${grade.student_name}</td>
+          <td>${grade.subject}</td>
+          <td>${grade.grade}</td>
+          <td>${grade.level}</td>
+        </tr>
+      `).join("");
+    }
+
+  } catch (error) {
+    console.error("Error fetching grades:", error);
+    gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ Failed to load grades.</td></tr>";
+  }
+}
+
+
+
+ // Function to delete all evaluations
+ async function deleteAllGrades() {
+      if (confirm("Are you sure you want to delete all evaluations? This action cannot be undone.")) {
+        try {
+          const response = await fetch("http://localhost:5002/api/admin/evaluations/all", {
+            method: "DELETE",
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert("✅ All evaluations deleted successfully!");
+            displayGrades(); // Update the table after deletion
+          } else {
+            alert(data.message || "Failed to delete evaluations.");
+          }
+        } catch (error) {
+          console.error("Error deleting evaluations:", error);
+          alert("An error occurred while deleting evaluations.");
+        }
+      }
+    }
+
+    // Load grades on page load
+    window.onload = displayGrades;
+// دالة لعرض التقييمات في الجدول
+async function displayGrades() {
+  const gradesTableBody = document.getElementById("grades-table-body");
+
+  try {
+    const response = await fetch("http://localhost:5002/api/admin/evaluations/all");
+    const grades = await response.json();
+
+    if (!Array.isArray(grades)) {
+      console.error("Error: Expected an array but received:", grades);
+      gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ Error retrieving grades.</td></tr>";
+      return;
+    }
+
+    if (grades.length === 0) {
+      gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ No grades found.</td></tr>";
+    } else {
+      gradesTableBody.innerHTML = grades.map(grade => `
+        <tr>
+          <td>${grade.student_name}</td>
+          <td>${grade.subject}</td>
+          <td>${grade.grade}</td>
+          <td>${grade.level}</td>
+        </tr>
+      `).join("");
+    }
+
+  } catch (error) {
+    console.error("Error fetching grades:", error);
+    gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ Failed to load grades.</td></tr>";
+  }
+}
+
+
+// Function to delete a specific evaluation based on student name and subject
+async function deleteGrade(studentName, subject) {
+  if (confirm(`Are you sure you want to delete the grade for ${studentName} in ${subject}?`)) {
+    try {
+      const response = await fetch(`http://localhost:5002/api/admin/evaluations/${studentName}/${subject}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("✅ Grade deleted successfully!");
+        displayGrades(); // Refresh the table after deletion
+      } else {
+        alert(data.message || "Failed to delete grade.");
+      }
+    } catch (error) {
+      console.error("Error deleting grade:", error);
+      alert("An error occurred while deleting grade.");
+    }
+  }
+}
+
+
+// Function to display uploaded grades in the table
+async function displayGrades() {
+  const gradesTableBody = document.getElementById("grades-table-body");
+
+  try {
+    const response = await fetch("http://localhost:5002/api/admin/evaluations/all");
+    const grades = await response.json();
+
+    console.log("Grades from API:", grades);
+
+    if (!Array.isArray(grades)) {
+      console.error("Error: Expected an array but received:", grades);
+      gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ خطأ في البيانات المسترجعة.</td></tr>";
+      return;
+    }
+
+    if (grades.length === 0) {
+      gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ No grades found.</td></tr>";
+    } else {
+      // Populate the table with grades and add delete buttons
+      gradesTableBody.innerHTML = grades.map(grade => `
+  <tr>
+    <td>${grade.student_name}</td>
+    <td>${grade.subject}</td>
+    <td>${grade.grade}</td>
+    <td>${grade.level}</td>
+    <td><button onclick="deleteGrade('${grade.student_name}', '${grade.subject}')">Delete</button></td>
+  </tr>
+`).join("");
+    }
+  } catch (error) {
+    console.error("Error fetching grades:", error);
+    gradesTableBody.innerHTML = "<tr><td colspan='4'>⚠️ Failed to load grades.</td></tr>";
+  }
+}
+  </script>
+</body>
+</html>

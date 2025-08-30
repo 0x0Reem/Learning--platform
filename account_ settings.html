@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --main-bg: #f5f5f5;
+      --card-bg: #fff;
+      --primary-color: #667eea;
+      --secondary-color: #764ba2;
+      --text-color: #333;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--main-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      transition: background 0.3s;
+    }
+
+    .settings-container {
+      background: var(--card-bg);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      width: 380px;
+      animation: slideUp 0.8s ease-out;
+      position: relative;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .settings-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    .settings-container label {
+      position: relative;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .settings-container input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-bottom: 2px solid #ddd;
+      outline: none;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+
+    .settings-container input:focus {
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .settings-container button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      color: #fff;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.4s;
+    }
+
+    .settings-container button:hover {
+      background: linear-gradient(135deg, #5a67d8, #6b46c1);
+      transform: translateY(-2px);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .actions button {
+      width: 48%;
+    }
+
+    #toast {
+      visibility: hidden;
+      min-width: 200px;
+      margin-left: -100px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 10px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      font-size: 14px;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+      from { bottom: 0; opacity: 0; }
+      to { bottom: 30px; opacity: 1; }
+    }
+
+    @keyframes fadeout {
+      from { bottom: 30px; opacity: 1; }
+      to { bottom: 0; opacity: 0; }
+    }
+
+    /* Dark Mode */
+    .dark-mode {
+      --main-bg: #2c2c2c;
+      --card-bg: #3c3c3c;
+      --text-color: #fff;
+    }
+
+    /* Social Media Links */
+    .social-links {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .social-links a {
+      margin: 0 10px;
+      color: var(--primary-color);
+      font-size: 20px;
+      text-decoration: none;
+    }
+
+    @media (max-width: 450px) {
+      .settings-container {
+        width: 90%;
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="settings-container">
+  <h2>Account Settings</h2>
+
+  <label for="username">User Name</label>
+  <input type="text" id="username" placeholder="Enter your name">
+
+  <label for="email">Email</label>
+  <input type="email" id="email" placeholder="Enter your email">
+
+  <div class="actions">
+    <button onclick="saveChanges()">Save Changes</button>
+    <button onclick="toggleDarkMode()">Dark Mode</button>
+  </div>
+
+  <div class="actions">
+    <button onclick="changePassword()">Change Password</button>
+    <button onclick="logout()">Log Out</button>
+  </div>
+
+  <div class="actions">
+    <button style="background: crimson;" onclick="deleteAccount()">Delete Account</button>
+  </div>
+
+  <div class="social-links">
+    <a href="#"><i class="fa fa-facebook"></i></a>
+    <a href="#"><i class="fa fa-google"></i></a>
+    <a href="#"><i class="fa fa-twitter"></i></a>
+  </div>
+
+</div>
+
+<div id="toast">Saved successfully!</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script>
+  window.onload = function() {
+    const storedName = localStorage.getItem('userName');
+    const storedEmail = localStorage.getItem('userEmail');
+    
+    if (storedName) {
+      document.getElementById('username').value = storedName;
+    }
+    if (storedEmail) {
+      document.getElementById('email').value = storedEmail;
+    }
+  };
+
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.style.visibility = "visible";
+    setTimeout(function() {
+      toast.style.visibility = "hidden";
+    }, 3000);
+  }
+
+  function saveChanges() {
+    const name = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    if (!name || !email) {
+      showToast('Please fill all fields');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showToast('Please enter a valid email');
+      return;
+    }
+
+    localStorage.setItem('userName', name);
+    localStorage.setItem('userEmail', email);
+    showToast('Changes saved successfully!');
+  }
+
+  function changePassword() {
+    const newPassword = prompt('Enter your new password:');
+    if (newPassword) {
+      localStorage.setItem('userPassword', newPassword);
+      showToast('Password changed successfully!');
+    }
+  }
+
+  function logout() {
+    localStorage.clear();
+    showToast('Logged out!');
+    setTimeout(() => location.reload(), 1500);
+  }
+
+  function deleteAccount() {
+    if (confirm('Are you sure you want to delete your account?')) {
+      localStorage.clear();
+      showToast('Account deleted!');
+      setTimeout(() => location.reload(), 1500);
+    }
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+</script>
+
+</body>
+</html>
